@@ -60,15 +60,23 @@ Currently, the inference feature list is supported:
 |Object Segmentation| object detection and segmentation.|
 
 ## ROS interfaces and outputs
-### Topic
+### Subscribed Topics
+```/camera/color/image_raw```([sensor_msgs::msg::Image](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Image.msg))
+### Published Topic
 - Face Detection:
-```/openvino_toolkit/faces```([object_msgs:msg:ObjectsInBoxes](https://github.com/intel/ros2_object_msgs/blob/master/msg/ObjectsInBoxes.msg))
-- Emotion Detection:
-```/openvino_toolkit/emotions```([people_msgs:msg:EmotionsStamped](https://github.com/intel/ros2_openvino_toolkit/blob/master/people_msgs/msg/EmotionsStamped.msg))
-- Age and Gender Detection:
-```/openvino_toolkit/age_genders```([people_msgs:msg:AgeGenderStamped](https://github.com/intel/ros2_openvino_toolkit/blob/master/people_msgs/msg/AgeGenderStamped.msg))
-- Head Pose:
-```/openvino_toolkit/headposes```([people_msgs:msg:HeadPoseStamped](https://github.com/intel/ros2_openvino_toolkit/blob/master/people_msgs/msg/HeadPoseStamped.msg))
+```/ros2_openvino_toolkit/face_detection```([object_msgs:msg:ObjectsInBoxes](https://github.com/intel/ros2_object_msgs/blob/master/msg/ObjectsInBoxes.msg))
+- Emotion Recognition:
+```/ros2_openvino_toolkit/emotions_recognition```([people_msgs:msg:EmotionsStamped](https://github.com/intel/ros2_openvino_toolkit/blob/master/people_msgs/msg/EmotionsStamped.msg))
+- Age and Gender Recognition:
+```/ros2_openvino_toolkit/age_genders_Recognition```([people_msgs:msg:AgeGenderStamped](https://github.com/intel/ros2_openvino_toolkit/blob/master/people_msgs/msg/AgeGenderStamped.msg))
+- Head Pose Estimation:
+```/ros2_openvino_toolkit/headposes_estimation```([people_msgs:msg:HeadPoseStamped](https://github.com/intel/ros2_openvino_toolkit/blob/master/people_msgs/msg/HeadPoseStamped.msg))
+- Object Detection:
+```/ros2_openvino_toolkit/object_detection```([object_msgs::msg::ObjectsInBoxes](https://github.com/intel/ros2_object_msgs/blob/master/msg/ObjectsInBoxes.msg))
+- Object Segmentation:
+```/ros2_openvino_toolkit/segmented_obejcts```([people_msgs::msg::ObjectsInMasks](https://github.com/intel/ros2_openvino_toolkit/blob/devel/people_msgs/msg/ObjectsInMasks.msg))
+- Rviz Output:
+```/ros2_openvino_toolkit/image_rviz```([sensor_msgs::msg::Image](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Image.msg))
 
 ### Service
 TBD
@@ -76,7 +84,7 @@ TBD
 ### RViz
 RViz dispaly is also supported by the composited topic of original image frame with inference result.
 To show in RViz tool, add an image marker with the composited topic:
-_To be added_
+```/ros2_openvino_toolkit/image_rviz```([sensor_msgs::msg::Image](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Image.msg))
 
 ### Image Window
 OpenCV based image window is natively supported by the package.
@@ -84,6 +92,29 @@ To enable window, Image Window output should be added into the output choices in
 
 ## Demo Result Snapshots
 See below pictures for the demo result snapshots.
+* run face detection sample code input from StandardCamera.
+	```bash
+	ros2 launch dynamic_vino_sample pipeline_people.launch.py
+	```
+* run face detection sample code input from Image.
+	```bash
+	ros2 launch dynamic_vino_sample pipeline_image.launch.py
+	```
+![face_detection_demo_image](https://github.com/RachelRen05/ros2_openvino_toolkit/blob/support_launch/data/images/image_detection.png "face detection demo image")
+* run object detection sample code input from RealSenseCamera.
+	```bash
+	ros2 launch dynamic_vino_sample pipeline_object.launch.py
+	```
+![object_detection_demo_realsense](https://github.com/RachelRen05/ros2_openvino_toolkit/blob/support_launch/data/images/object_detection.gif "object detection demo realsense")
+* run object detection sample code input from RealSenseCameraTopic.
+	```bash
+	ros2 launch dynamic_vino_sample pipeline_video.launch.py
+	```
+* run object segmentation sample code input from Video.
+	```bash
+	ros2 launch dynamic_vino_sample pipeline_segmentation.launch.py
+	```
+	![object_detection_demo_realsense](https://github.com/RachelRen05/ros2_openvino_toolkit/blob/support_launch/data/images/object_detection.gif "object detection demo realsense")
 
 # Installation & Launching
 ## Dependencies Installation
