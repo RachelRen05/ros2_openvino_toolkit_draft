@@ -28,7 +28,7 @@ From the view of logic implementation, the package introduces the definitions of
 
 Once a corresponding program is launched with a specified .yaml config file passed in the .launch.py file or via commandline, _**parameter manager**_ analyzes the configurations about pipeline and the whole framework, then shares the parsed configuration information with pipeline procedure. A _**pipeline instance**_ is created by following the configuration info and is added into _**pipeline manager**_ for lifecycle control and inference action triggering.
 
-The contents in **.yaml config file** should be well structured and follow the supported rules and entity names. Please see [the configuration guidance]() for how to create or edit the config files.
+The contents in **.yaml config file** should be well structured and follow the supported rules and entity names. Please see [the configuration guidance](https://github.com/RachelRen05/ros2_openvino_toolkit_draft/blob/master/doc/YAML_CONFIGURATION_GUIDE.MD) for how to create or edit the config files.
 
 **Pipeline** fulfills the whole data handling process: initiliazing Input Component for image data gathering and formating; building up the structured inference network and passing the formatted data through the inference network; transfering the inference results and handling output, etc.
 
@@ -88,10 +88,38 @@ To show in RViz tool, add an image marker with the composited topic:
 
 ### Image Window
 OpenCV based image window is natively supported by the package.
-To enable window, Image Window output should be added into the output choices in .yaml config file. see [the config file guidance](TBD) for checking/adding this feature in your launching.
+To enable window, Image Window output should be added into the output choices in .yaml config file. see [the config file guidance](https://github.com/RachelRen05/ros2_openvino_toolkit_draft/blob/master/doc/YAML_CONFIGURATION_GUIDE.MD) for checking/adding this feature in your launching.
 
-## Demo Result Snapshots
-See below pictures for the demo result snapshots.
+## Running the Demo
+* Preparation
+	* download and convert a trained model to produce an optimized Intermediate Representation (IR) of the model 
+		```bash
+		sudo mkdir -p ~/Downloads/models
+		cd ~/Downloads/models
+		wget http://download.tensorflow.org/models/object_detection/mask_rcnn_inception_v2_coco_2018_01_28.tar.gz
+		tar -zxvf mask_rcnn_inception_v2_coco_2018_01_28.tar.gz
+		cd mask_rcnn_inception_v2_coco_2018_01_28
+		python3 /opt/intel/computer_vision_sdk/deployment_tools/model_optimizer/mo_tf.py --input_model frozen_inference_graph.pb --tensorflow_use_custom_operations_config /opt/intel/computer_vision_sdk/deployment_tools/model_optimizer/extensions/front/tf/mask_rcnn_support.json --tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels --output_dir ./output/
+		sudo mkdir -p /opt/models
+		sudo ln -s ~/Downloads/models/mask_rcnn_inception_v2_coco_2018_01_28 /opt/models/
+	* download the optimized Intermediate Representation (IR) of model (excute _once_)<br>
+		```bash
+		cd /opt/openvino_toolkit/open_model_zoo/model_downloader
+		python3 downloader.py --name face-detection-adas-0001
+		python3 downloader.py --name age-gender-recognition-retail-0013
+		python3 downloader.py --name emotions-recognition-retail-0003
+		python3 downloader.py --name head-pose-estimation-adas-0001
+		python3 downloader.py --name ssd300
+		```
+	* copy label files (excute _once_)<br>
+		```bash
+		sudo cp /opt/openvino_toolkit/ros2_openvino_toolkit/data/labels/emotions-recognition/FP32/emotions-recognition-retail-0003.labels /opt/openvino_toolkit/open_model_zoo/model_downloader/Retail/object_attributes/emotions_recognition/0003/dldt
+		sudo cp /opt/openvino_toolkit/ros2_openvino_toolkit/data/labels/object_segmentation/frozen_inference_graph.labels ~/Downloads/models/mask_rcnn_inception_v2_coco_2018_01_28/output
+		```
+	* set ENV LD_LIBRARY_PATH<br>
+		```bash
+		export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/openvino_toolkit/dldt/inference-engine/bin/intel64/Release/lib
+		```
 * run face detection sample code input from StandardCamera.
 	```bash
 	ros2 launch dynamic_vino_sample pipeline_people.launch.py
@@ -100,12 +128,12 @@ See below pictures for the demo result snapshots.
 	```bash
 	ros2 launch dynamic_vino_sample pipeline_image.launch.py
 	```
-![face_detection_demo_image](https://github.com/RachelRen05/ros2_openvino_toolkit/blob/support_launch/data/images/image_detection.png "face detection demo image")
+![face_detection_demo_image](https://github.com/RachelRen05/ros2_openvino_toolkit_draft/blob/master/data/images/face_detection.png "face detection demo image")
 * run object detection sample code input from RealSenseCamera.
 	```bash
 	ros2 launch dynamic_vino_sample pipeline_object.launch.py
 	```
-![object_detection_demo_realsense](https://github.com/RachelRen05/ros2_openvino_toolkit/blob/support_launch/data/images/object_detection.gif "object detection demo realsense")
+![object_detection_demo_realsense](https://github.com/RachelRen05/ros2_openvino_toolkit_draft/blob/master/data/images/object_detection.gif "object detection demo realsense")
 * run object detection sample code input from RealSenseCameraTopic.
 	```bash
 	ros2 launch dynamic_vino_sample pipeline_video.launch.py
@@ -114,75 +142,14 @@ See below pictures for the demo result snapshots.
 	```bash
 	ros2 launch dynamic_vino_sample pipeline_segmentation.launch.py
 	```
-	![object_detection_demo_realsense](https://github.com/RachelRen05/ros2_openvino_toolkit/blob/support_launch/data/images/object_detection.gif "object detection demo realsense")
+	![object_segmentation_demo_video](https://github.com/RachelRen05/ros2_openvino_toolkit_draft/blob/master/data/images/object_segmentation.gif "object segmentation demo video")
 
 # Installation & Launching
 ## Dependencies Installation
-One-step installation scripts are provided for the dependencies' installation. Please see [the guide]() for details.
-Note that beside the opensource version of the openVINO toolkit, Intel also releases the toolkit in Binary version. If you prefer to use the binary version, you may follow [this guide]().
+One-step installation scripts are provided for the dependencies' installation. Please see [the guide](https://github.com/RachelRen05/ros2_openvino_toolkit_draft/blob/master/doc/OPEN_SOURCE_CODE_README.md) for details.
+Note that beside the opensource version of the openVINO toolkit, Intel also releases the toolkit in Binary version. If you prefer to use the binary version, you may follow [this guide](https://github.com/RachelRen05/ros2_openvino_toolkit_draft/blob/master/doc/BINARY_VERSION_README.md).
 
-## Install ROS2 OpenVINO Toolkit
-### Download
-```bash
-mkdir -p ~/ros2_overlay_ws/src
-cd ~/ros2_overlay_ws/src
-git clone https://github.com/intel/ros2_openvino_toolkit
-git clone https://github.com/intel/ros2_object_msgs
-git clone https://github.com/ros-perception/vision_opencv -b ros2
-```
-### Build
-```
-source ~/ros2_ws/install/local_setup.bash
-cd ~/ros2_overlay_ws
-colcon build --symlink-install
-```
 
-## Launch ROS2 OpenVINO Toolkit
-1.  Preparation
-	-  copy label files (excute _once_)
-	```bash
-	sudo cp ~/ros2_overlay_ws/src/ros2_openvino/data/labels/emotions-recognition/FP32/emotions-recognition-retail-0003.labels /opt/intel/computer_vision_sdk/deployment_tools/intel_models/emotions-recognition-retail-0003/FP32
-	```
-	- set OpenVINO toolkit ENV
-	```bash
-	source /opt/intel/computer_vision_sdk/bin/setupvars.sh
-	```
-	- set ENV LD_LIBRARY_PATH
-	```bash
-	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/intel/computer_vision_sdk/deployment_tools/inference_engine/samples/build/intel64/Release/lib
-	```
-
-2.  run sample code with command-line arguments for <b>image or video</b> detection
-```bash
-ros2 run dynamic_vino_sample dynamic_vino_sample -m <model_path_for_face_detection> -m_em <model_path_for_emotion_detection> -m_ag <model_path_for_age_and_gender_detection> -m-hp <model_path_for_headpose_detection> -i <input_type> -i_path <file_directory> -d <device> -d_em <device> -d_ag <device> -d_hp <device>
-```
-
-Options for &lt;input_type&gt;: _Image_ or _Video_.
-
-Options for &lt;device&gt;: _CPU_ or _GPU_. Default is _CPU_. 
-    
-For example,
-```bash
-ros2 run dynamic_vino_sample dynamic_vino_sample -m /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml -m_em /opt/intel/computer_vision_sdk/deployment_tools/intel_models/emotions-recognition-retail-0003/FP32/emotions-recognition-retail-0003.xml -m_ag /opt/intel/computer_vision_sdk/deployment_tools/intel_models/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -m-hp /opt/intel/computer_vision_sdk/deployment_tools/intel_models/head-pose-estimation-adas-0001/FP32/head-pose-estimation-adas-0001.xml -i Image -i_path <file_directory> -d CPU -d_em CPU -d_ag GPU -d_hp GPU
-```
-
-3. run sample code with command-line arguments for <b>video stream from camera</b> detection
-```bash
-ros2 run dynamic_vino_sample dynamic_vino_sample -m <model_path_for_face_detection> -m_em <model_path_for_emotion_detection> -m_ag <model_path_for_age_and_gender_detection> -m-hp <model_path_for_headpose_detection> -i <input_type> -d <device> -d_em <device> -d_ag <device> -d_hp <device>
-```
-
-Options for &lt;input_type&gt;: _StandardCamera_ or _RealSenseCamera_. Default is _StandardCamera_.
-
-Options for &lt;device&gt;: _CPU_ or _GPU_. Default is _CPU_. 
-    
-For example, 
-```bash
-ros2 run dynamic_vino_sample dynamic_vino_sample -m /opt/intel/computer_vision_sdk/deployment_tools/intel_models/face-detection-adas-0001/FP32/face-detection-adas-0001.xml -m_em /opt/intel/computer_vision_sdk/deployment_tools/intel_models/emotions-recognition-retail-0003/FP32/emotions-recognition-retail-0003.xml -m_ag /opt/intel/computer_vision_sdk/deployment_tools/intel_models/age-gender-recognition-retail-0013/FP32/age-gender-recognition-retail-0013.xml -m-hp /opt/intel/computer_vision_sdk/deployment_tools/intel_models/head-pose-estimation-adas-0001/FP32/head-pose-estimation-adas-0001.xml -i StandardCamera -d CPU -d_em CPU -d_ag GPU -d_hp GPU
-```
-4. run sample code with parameters extracted from [yaml](https://github.com/intel/ros2_openvino_toolkit/blob/master/vino_param_lib/param/pipeline.yaml).
-```bash
-ros2 run dynamic_vino_sample pipeline_with_params
-```
 
 # TODO Features
 
