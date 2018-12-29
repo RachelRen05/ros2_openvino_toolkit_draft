@@ -79,7 +79,7 @@ The name of the inference engine. Currently, the inference feature list is suppo
 
 #### model
 The path of the model. The scheme below illustrates the typical workflow for deploying a trained deep learning model.
-
+![trained deep learning model](https://github.com/RachelRen05/ros2_openvino_toolkit_draft/blob/master/doc/CVSDK_Flow.png"trained deep learning model")
 
 #### engine
 Each supported target device has a plugin. Each plugin is a DLL/shared library. 
