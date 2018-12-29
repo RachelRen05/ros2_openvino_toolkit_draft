@@ -60,9 +60,10 @@ Currently, the inference feature list is supported:
 |Object Segmentation| object detection and segmentation.|
 
 ## ROS interfaces and outputs
-### Subscribed Topics
+### Topic
+#### Subscribed Topic
 ```/camera/color/image_raw```([sensor_msgs::msg::Image](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Image.msg))
-### Published Topic
+#### Published Topic
 - Face Detection:
 ```/ros2_openvino_toolkit/face_detection```([object_msgs:msg:ObjectsInBoxes](https://github.com/intel/ros2_object_msgs/blob/master/msg/ObjectsInBoxes.msg))
 - Emotion Recognition:
