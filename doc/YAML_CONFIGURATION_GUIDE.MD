@@ -45,7 +45,7 @@ Pipelines:
 
 Common:
 ```
-## Interface Engine Description
+## Interface Description
 The Inference Engine is a set of C++ classes to provides an API to read the Intermediate Representation, set the input and output formats, and execute the model on devices.
 ### name
 The name of this pipeline, its value can be any value other than empty.
