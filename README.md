@@ -62,6 +62,7 @@ Currently, the inference feature list is supported:
 ## ROS interfaces and outputs
 ### Topic
 #### Subscribed Topic
+- Image topic:
 ```/camera/color/image_raw```([sensor_msgs::msg::Image](https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Image.msg))
 #### Published Topic
 - Face Detection:
